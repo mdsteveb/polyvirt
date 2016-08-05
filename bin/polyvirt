@@ -11,34 +11,59 @@ end
 
 include GLI::App
 
-program_desc 'Describe your application here'
+program_desc 'A high-level manager for libvirt hypervisors and guests'
 
 version Polyvirt::VERSION
 
 subcommand_option_handling :normal
 arguments :strict
 
-desc 'Describe some switch here'
-switch [:s,:switch]
+desc 'Verbose output'
+switch [:v,:verbose]
 
-desc 'Describe some flag here'
-default_value 'the default'
-arg_name 'The name of the argument'
-flag [:f,:flagname]
+#desc 'Describe some flag here'
+#default_value 'the default'
+#arg_name 'The name of the argument'
+#flag [:f,:flagname]
 
-desc 'Describe hypervisor here'
+desc 'Commands for working with hypervisors'
 arg_name 'Describe arguments to hypervisor here'
-command :hypervisor do |c|
-  c.desc 'Describe a switch to hypervisor'
-  c.switch :s
+command [:hypervisor,:hv] do |c|
+#  c.desc 'Describe a switch to hypervisor'
+#  c.switch :s
 
-  c.desc 'Describe a flag to hypervisor'
-  c.default_value 'default'
-  c.flag :f
-  c.action do |global_options,options,args|
+#  c.desc 'Describe a flag to hypervisor'
+#  c.default_value 'default'
+#  c.flag :f
+#  c.action do |global_options,options,args|
+
+    c.desc "List all defined hypervisors"
+    c.command :list do |list|
+      list.action do |global_options,options,args|
+      end
+    end
+
+    c.desc "Add a hypervisor definition"
+    c.command [:add,:new] do |add|
+      add.action do |global_options,options,args|
+      end
+    end
+
+    c.desc "Remove a hypervisor definition"
+    c.command [:rm,:remove,:delete] do |rm|
+      rm.action do |global_options,options,args|
+      end
+    end
+
+    c.desc "Display information about a hypervisor"
+    c.command [:show,:display] do |show|
+      show.action do |global_options,options,args|
+      end
+    end
+
 
     # Your command logic here
-     
+
     # If you have any errors, just raise them
     # raise "that command made no sense"
 
@@ -46,7 +71,7 @@ command :hypervisor do |c|
   end
 end
 
-desc 'Describe domain here'
+desc 'Commands for working with domains'
 arg_name 'Describe arguments to domain here'
 command :domain do |c|
   c.action do |global_options,options,args|
