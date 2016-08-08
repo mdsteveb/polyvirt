@@ -20,5 +20,5 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
   s.add_runtime_dependency('gli','2.14.0')
-  s.add_runtime_dependency('ruby-libvirt', '~> 0.6.0')
+  s.add_runtime_dependency('ruby-libvirt')
 end

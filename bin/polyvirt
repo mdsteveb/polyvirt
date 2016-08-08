@@ -68,7 +68,6 @@ command [:hypervisor,:hv] do |c|
     # raise "that command made no sense"
 
     puts "hypervisor command ran"
-  end
 end
 
 desc 'Commands for working with domains'
