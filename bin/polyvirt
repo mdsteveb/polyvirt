@@ -55,7 +55,7 @@ command [:hypervisor,:hv] do |c|
       end
     end
 
-    c.desc "Display information about a hypervisor"
+    c.desc "Show information about a hypervisor"
     c.command [:show,:display] do |show|
       show.action do |global_options,options,args|
       end
@@ -84,6 +84,7 @@ pre do |global,command,options,args|
   # chosen command
   # Use skips_pre before a command to skip this block
   # on that command only
+  $config = Config.new(Config::DEFAULT_CONFIG_FILE)
   true
 end
 

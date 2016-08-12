@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     polyvirt (0.0.1)
-      gli (= 2.14.0)
-      ruby-libvirt (~> 0.6.0)
+      gli
+      ruby-libvirt
 
 GEM
   remote: https://rubygems.org/
