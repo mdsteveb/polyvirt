@@ -21,4 +21,8 @@ class Config
     @store.transaction { @store.delete(key) }
   end
 
+  def keys
+    @store.transaction { @store.roots }
+  end
+
 end

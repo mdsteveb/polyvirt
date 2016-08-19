@@ -26,48 +26,137 @@ switch [:v,:verbose]
 #arg_name 'The name of the argument'
 #flag [:f,:flagname]
 
+#desc 'Refresh our cache of hypervisor and domain info'
+#arg_name 'Describe arguments to refresh here'
+#command [:refresh] do |c|
+#end
+
 desc 'Commands for working with hypervisors'
 arg_name 'Describe arguments to hypervisor here'
 command [:hypervisor,:hv] do |c|
-#  c.desc 'Describe a switch to hypervisor'
-#  c.switch :s
-
-#  c.desc 'Describe a flag to hypervisor'
-#  c.default_value 'default'
-#  c.flag :f
-#  c.action do |global_options,options,args|
-
-    c.desc "List all defined hypervisors"
-    c.command :list do |list|
-      list.action do |global_options,options,args|
+  c.desc "List all defined hypervisors"
+  c.command [:list,:ls] do |list|
+    list.desc "long form adds URI to output"
+    list.switch [:l,:long]
+    list.action do |global_options,options,args|
+      if $allhypervisors
+        if options[:long] or options[:l]
+          $allhypervisors.each do |h|
+            meta = $config.get(h)
+            uri = meta[:uri]
+            enabled = (not (meta[:disabled]))
+            if enabled
+              name = h
+            else
+              name = "(#{h})"
+            end
+            puts "#{name}\t#{uri}"
+          end
+        else
+          puts $hypervisors.join("\n")
+        end
+      else
+        puts "No hypervisors defined - please add them first"
       end
     end
+  end
+  c.default_command :list
 
-    c.desc "Add a hypervisor definition"
-    c.command [:add,:new] do |add|
-      add.action do |global_options,options,args|
+  c.desc "Add a hypervisor definition"
+  c.arg 'name'
+  c.arg 'uri'
+  c.command [:add,:new] do |add|
+    add.action do |global_options,options,args|
+      name = args.shift
+      uri = args.shift
+      if $hypervisors and $hypervisors.include? name
+        puts "A hypervisor named #{name} is already defined"
+      else
+        #$config.put("hypervisors", $hypervisors << name)
+        $config.put(name, { "uri": uri })
       end
     end
+  end
 
-    c.desc "Remove a hypervisor definition"
-    c.command [:rm,:remove,:delete] do |rm|
-      rm.action do |global_options,options,args|
+  c.desc "Remove a hypervisor definition"
+  c.arg 'name'
+  c.command [:rm,:remove,:delete] do |rm|
+    rm.action do |global_options,options,args|
+      name = args.shift
+      if $allhypervisors.include? name
+        $allhypervisors.delete(name)
+        $hypervisors.delete(name)
+        #config.put("hypervisors", name)
+        config.delete(name)
+      else
+        puts "There is no hypervisor named #{name} defined"
       end
     end
+  end
 
-    c.desc "Show information about a hypervisor"
-    c.command [:show,:display] do |show|
-      show.action do |global_options,options,args|
+  c.desc "Mark a hypervisor enabled"
+  c.arg "name"
+  c.command :enable do |enable|
+    enable.action do |global_options,options,args|
+      name = args.shift
+      if $allhypervisors.include? name
+        h = $config.get(name)
+        h.delete(:disabled)
+        $config.put(name, h)
+      else
+        puts "There is no hypervisor named #{name} defined"
       end
     end
+  end
 
+  c.desc "Mark a hypervisor disabled"
+  c.arg "name"
+  c.command :disable do |disable|
+    disable.action do |global_options,options,args|
+      name = args.shift
+      if $allhypervisors.include? name
+        h = $config.get(name)
+        h[:disabled] = true
+        $config.put(name, h)
+      else
+        puts "There is no hypervisor named #{name} defined"
+      end
+    end
+  end
 
-    # Your command logic here
+  c.desc "Show information about a hypervisor"
+  c.arg "name"
+  c.command [:show,:display,:information] do |show|
+    show.action do |global_options,options,args|
+      name = args.shift
+      if $allhypervisors.include? name
+        enabled = (not ($config.get(name)[:disabled]))
+        h = Hypervisor.new(name)
+        puts "Hypervisor:            #{name}"
+        puts "Enabled in polyvirt:   #{enabled}"
+        puts "Model:                 #{h.model}"
+        puts "Total Memory:          #{h.memory}"
+        puts "Free Memory:           #{h.freememory}"
+        puts "Total CPU threads:     #{h.cpus}"
+        puts "MHz:                   #{h.mhz}"
+        puts "(NUMA) Nodes:          #{h.numanodes}"
+        puts "Physical sockets:      #{h.sockets}"
+        puts "Cores per socket:      #{h.cores}"
+        puts "Threads per core:      #{h.threads}"
+        if h.active_domain_names.length > 0
+          puts "Active domains:"
+          puts "\t" + h.active_domain_names.join(" ")
+        end
+        if h.inactive_domain_names.length > 0
+          puts "Inactive domains:"
+          puts "\t" + h.inactive_domain_names.join(" ")
+        end
+      else
+        puts "There is no hypervisor named #{name} defined"
+      end
+    end
+  end
 
-    # If you have any errors, just raise them
-    # raise "that command made no sense"
-
-    puts "hypervisor command ran"
 end
 
 desc 'Commands for working with domains'
@@ -85,6 +174,12 @@ pre do |global,command,options,args|
   # Use skips_pre before a command to skip this block
   # on that command only
   $config = Config.new(Config::DEFAULT_CONFIG_FILE)
+  #$hvlist = $config.get("hypervisors")
+  #$hvlist = $config.keys
+  #$hvlist ||= []
+  $allhypervisors = $config.keys
+  $allhypervisors ||= []
+  $hypervisors = $allhypervisors.select{|hv| $config.get(hv)[:disabled] == nil}
   true
 end
 
