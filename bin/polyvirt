@@ -162,8 +162,27 @@ end
 desc 'Commands for working with domains'
 arg_name 'Describe arguments to domain here'
 command :domain do |c|
-  c.action do |global_options,options,args|
-    puts "domain command ran"
+  #c.action do |global_options,options,args|
+  #  puts "domain command ran"
+  #end
+
+  c.desc "List all domains"
+  c.command [:list,:ls] do |list|
+  end
+
+  c.desc "Show information about a domain"
+  c.arg "domain"
+  c.command [:show,:display,:information] do |show|
+  end
+
+  c.desc "Dump the libvirt XML configuration of a domain"
+  c.arg "domain"
+  c.command [:xml,:dumpxml] do |xml|
+  end
+
+  c.pre do |global,command,options,args|
+    # get domain -> hypervisor mappings (CACHE?)
+    true
   end
 end
 
