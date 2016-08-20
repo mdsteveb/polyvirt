@@ -39,7 +39,7 @@ command [:hypervisor,:hv] do |c|
     list.desc "long form adds URI to output"
     list.switch [:l,:long]
     list.action do |global_options,options,args|
-      if $allhypervisors
+      if $allhypervisors and $allhypervisors.count > 0
         if options[:long] or options[:l]
           $allhypervisors.each do |h|
             meta = $config.get(h)
