@@ -86,8 +86,8 @@ command [:hypervisor,:hv] do |c|
       if $allhypervisors.include? name
         $allhypervisors.delete(name)
         $hypervisors.delete(name)
-        #config.put("hypervisors", name)
-        config.delete(name)
+        #$config.put("hypervisors", name)
+        $config.delete(name)
       else
         puts "There is no hypervisor named #{name} defined"
       end
@@ -131,7 +131,7 @@ command [:hypervisor,:hv] do |c|
       name = args.shift
       if $allhypervisors.include? name
         enabled = (not ($config.get(name)[:disabled]))
-        h = Hypervisor.new(name)
+        h = Hypervisor.new(name, $config.get(name)[:uri])
         puts "Hypervisor:            #{name}"
         puts "Enabled in polyvirt:   #{enabled}"
         puts "Model:                 #{h.model}"

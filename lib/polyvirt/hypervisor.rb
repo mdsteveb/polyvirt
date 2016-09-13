@@ -10,9 +10,9 @@ class Hypervisor
   end
 
   # Instance methods
-  def initialize(name)
+  def initialize(name, uri)
     @name = name
-    @uri = "qemu+ssh://elsa@#{name}/system?socket=/run/libvirt/libvirt-sock"
+    @uri = uri
     reopen
     @nodeinfo = @conn.node_get_info
     @@count += 1
