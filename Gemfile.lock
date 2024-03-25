@@ -37,7 +37,7 @@ GEM
     multi_json (1.12.1)
     multi_test (0.1.2)
     rake (13.0.6)
-    rdoc (6.3.3)
+    rdoc (6.3.4.1)
     rspec-expectations (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
